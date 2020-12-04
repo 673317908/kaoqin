@@ -1,9 +1,6 @@
 <template>
 	<view>
-		<view class="none_data">
-			<view class="iconfont icon-zanwushuju" style="font-size:310rpx"></view>
-			<view>暂无数据</view>
-		</view>
+		<NoneData />
 		<view class="add_child" @click="addChild">
 			<text>添加孩子</text>
 		</view>
@@ -11,7 +8,11 @@
 </template>
 
 <script>
+	import NoneData from "../../../components/none_data.vue"
 	export default {
+		components: {
+			NoneData
+		},
 		data() {
 			return {}
 		},
@@ -26,15 +27,6 @@
 </script>
 
 <style>
-	.none_data {
-		position: fixed;
-		top: 40%;
-		left: 50%;
-		transform: translate(-50%, -40%);
-		text-align: center;
-		color: #999999;
-	}
-
 	.add_child {
 		position: fixed;
 		bottom: 0rpx;

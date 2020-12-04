@@ -1,5 +1,4 @@
 <template>
-	<!--pages/user/child/add/index.wxml-->
 	<view class="add_form">
 		dsdas
 	</view>

@@ -2,7 +2,7 @@
 	<view>
 		<view class="detail_header">
 			<view class="avatar_info">
-				<image src="../../../images/touxiang.png" mode="widthFix"></image>
+				<image src="../../../static/images/touxiang.png" mode="widthFix"></image>
 				<view class="student_name">学生姓名</view>
 			</view>
 		</view>
@@ -68,5 +68,6 @@
 
 	.icon_color {
 		color: #008fff;
+		margin-right: 10rpx;
 	}
 </style>

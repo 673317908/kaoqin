@@ -3,11 +3,11 @@
 	<view class="add_form">
 		<view class="form_item">
 			<view style="margin-right:30rpx;"><text style="color:red;margin-right:10rpx;">*</text>姓名</view>
-			<input type="text" name="name" placeholder="请输入姓名" />
+			<input type="text" name="name" placeholder="请输入姓名" v-model="form.name" />
 		</view>
 		<view class="form_item">
 			<view style="margin-right:30rpx;"><text style="color:red;margin-right:10rpx;">*</text>学号</view>
-			<input type="text" name="id" placeholder="请输入学号" />
+			<input type="text" name="id" placeholder="请输入学号" v-model="form.id" />
 		</view>
 		<view class="form_button">
 			<view @click="formSubmit" class="btn-normal">提交</view>
@@ -19,7 +19,10 @@
 	export default {
 		data() {
 			return {
-				title: 'Hello'
+				form: {
+					name: "",
+					id: ""
+				}
 			}
 		},
 		onLoad() {
@@ -27,9 +30,7 @@
 		},
 		methods: {
 			formSubmit() {
-				uni.navigateTo({
-					url: '../user/index'
-				})
+			console.log(this.form)
 			}
 		}
 	}
@@ -45,21 +46,6 @@
 
 	.form_button {
 		margin-top: 20rpx;
-	}
-
-	.btn-normal {
-		display: block;
-		margin: 0;
-		padding: 0;
-		line-height: normal;
-		background: none;
-		border-radius: 0;
-		box-shadow: none;
-		border: none;
-		font-size: unset;
-		text-align: unset;
-		overflow: visible;
-		color: inherit;
 	}
 
 	.form_button view {
