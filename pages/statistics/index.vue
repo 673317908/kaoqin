@@ -33,7 +33,7 @@
 				</view>
 				<view class="day_list">
 					<view :style="activeIndex===index?'background-color: #008fff;border-radius: 50%;color:white;':''" :class=" item.todayShow?['day_item','active_day_css']:['day_item','af']"
-					 v-for="(item,index) in dayArray" :key="index" @click="activeDay(index)">{{item.day}}</view>
+					 v-for="(item,index) in dayArray" :key="index" @click="activeDay(index)"><text :style="index>=5?'color:#e1e1e1;':''">{{item.day}}</text></view>
 				</view>
 			</view>
 			<view class="line">
@@ -76,7 +76,8 @@
 				calendarArray: ['一', '二', '三', '四', '五', '六', '日'],
 				dayArray: null,
 				activeIndex: null,
-				todayShow: false
+				todayShow: false,
+				weekend: true
 			}
 		},
 		methods: {
@@ -92,7 +93,16 @@
 			},
 			// 日期选择
 			activeDay(index) {
-				this.activeIndex = index
+
+				if (index == 5 || index == 6) {
+					uni.showToast({
+						icon: 'none',
+						title: '周末就好好休息吧'
+					})
+					this.weekend = true
+				} else {
+					this.activeIndex = index
+				}
 			},
 			// 页面跳转
 			jump() {
