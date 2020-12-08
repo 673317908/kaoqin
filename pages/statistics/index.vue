@@ -32,8 +32,8 @@
 					</view>
 				</view>
 				<view class="day_list">
-					<view :class="activeIndex===index?['day_item','active_day_css']:['day_item','af']" v-for="(item,index) in dayArray" :key="index"
-					 @click="activeDay(index)">{{item}}</view>
+					<view :class="activeIndex===index?['day_item','active_day_css']:['day_item','af']"
+					 v-for="(item,index) in dayArray" :key="index" @click="activeDay(index)">{{item}}</view>
 				</view>
 			</view>
 			<view class="line">
@@ -65,23 +65,65 @@
 </template>
 
 <script>
+	import {
+		getMonday,
+		getDate,
+		getMonth
+	} from "../../utils/date.js"
 	export default {
 		data() {
 			return {
 				calendarArray: ['一', '二', '三', '四', '五', '六', '日'],
-				dayArray: ['03', '04', '05', '06', '07', '08', '09'],
-				activeIndex: null
+				dayArray: null,
+				activeIndex: null,
+				todayShow: false
 			}
 		},
 		methods: {
+			// 添加选择样式
+			addActiveCss() {
+				var today = getDate().num.D < 9 ? '0' + getDate().num.D : getDate().num.D
+				this.dayArray.forEach(item => {
+					if (today == item) {
+						this.todayShow = true
+					}
+				})
+			},
+			// 日期选择
 			activeDay(index) {
 				this.activeIndex = index
 			},
+			// 页面跳转
 			jump() {
 				uni.navigateTo({
 					url: "./detail/index"
 				})
+			},
+			// 获取日期
+			getDay() {
+				var starttime = getMonday('s', 0)
+				var endTime = getMonday('e', 0)
+				var endMonth = getMonth('e', 0).slice(8, 10)
+				var arr = [+starttime.d, +starttime.d + 1, +starttime.d + 2, +starttime.d + 3, +starttime.d + 4, +starttime.d + 5,
+					+
+					starttime.d + 6
+				]
+				var a = 0
+				this.dayArray = arr.map(item => {
+					if (item <= 9) {
+						return '0' + item
+					} else if (item > endMonth) {
+						return '0' + (++a)
+					} else {
+						return item
+					}
+				})
+				this.addActiveCss()
 			}
+		},
+		onLoad() {
+			this.getDay()
+			// this.addActiveCss()
 		}
 	}
 </script>
@@ -256,7 +298,7 @@
 		width: 6rpx;
 		background: #e8e8e8;
 		position: absolute;
-		top: 45rpx;
+		top: 50rpx;
 		left: 14rpx;
 	}
 </style>

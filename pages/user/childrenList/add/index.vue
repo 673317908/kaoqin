@@ -30,7 +30,7 @@
 		},
 		methods: {
 			formSubmit() {
-			console.log(this.form)
+				
 			}
 		}
 	}
