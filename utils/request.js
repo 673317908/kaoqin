@@ -1,6 +1,6 @@
 const baseUrl = ''
 
-export default (params, data) => {
+export default (params) => {
 	uni.showLoading({
 		title: '加载中'
 	})
@@ -8,7 +8,7 @@ export default (params, data) => {
 		uni.request({
 			url: baseUrl + params.url,
 			method: params.method,
-			data,
+			data: params.data,
 			header: {
 				"Content-Type": "application/json; charset=UTF-8"
 			},
