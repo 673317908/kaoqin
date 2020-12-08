@@ -24,11 +24,14 @@
 </template>
 
 <script>
+	import {
+		getDate
+	} from "../../../utils/date.js"
 	export default {
 		data() {
 			return {
 				date: 111,
-				filterDate: ""
+				filterDate: getDate().num.fullDate
 			}
 		},
 		methods: {
@@ -38,13 +41,6 @@
 				} = e.detail
 				this.filterDate = value
 			},
-			getDate() {
-				var date = new Date()
-				var Y = date.getFullYear()
-				var M = date.getMonth() + 1 > 9 ? date.getMonth() + 1 : '0' + date.getMonth() + 1
-				var D = date.getDate() > 9 ? date.getDate() : '0' + date.getDate()
-				this.filterDate = Y + '-' + M + '-' + D
-			}
 		},
 		onLoad() {
 			this.getDate()
