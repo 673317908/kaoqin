@@ -2,7 +2,7 @@
 	<view id="page">
 		<view class="month_collect">
 			<view class="month_collect_title">
-				<view>11月汇总</view>
+				<view>{{monthTitle}}月汇总</view>
 				<view class="iconfont icon-arrow-right" style="color:#c1c1c2;font-size:24rpx;" @click="jump"></view>
 			</view>
 			<view class="month_collect_number">
@@ -32,8 +32,8 @@
 					</view>
 				</view>
 				<view class="day_list">
-					<view :class="activeIndex===index?['day_item','active_day_css']:['day_item','af']"
-					 v-for="(item,index) in dayArray" :key="index" @click="activeDay(index)">{{item}}</view>
+					<view :class="activeIndex===index?['day_item','active_day_css']:['day_item','af']" v-for="(item,index) in dayArray"
+					 :key="index" @click="activeDay(index)">{{item}}</view>
 				</view>
 			</view>
 			<view class="line">
@@ -76,7 +76,8 @@
 				calendarArray: ['一', '二', '三', '四', '五', '六', '日'],
 				dayArray: null,
 				activeIndex: null,
-				todayShow: false
+				todayShow: false,
+				monthTitle: getDate().num.M
 			}
 		},
 		methods: {
@@ -123,7 +124,6 @@
 		},
 		onLoad() {
 			this.getDay()
-			// this.addActiveCss()
 		}
 	}
 </script>
