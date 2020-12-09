@@ -30,7 +30,16 @@
 		},
 		methods: {
 			formSubmit() {
-				
+				this.$rq({
+					url: "/news/getList/",
+					methods: "post",
+					data: {
+						pageNumber: 1,
+						pageSize: 10
+					}
+				}).then(res => {
+					console.log(res)
+				})
 			}
 		}
 	}

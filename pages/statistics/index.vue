@@ -22,7 +22,7 @@
 		</view>
 		<view class="day_record">
 			<view class="day_record_title">
-				<view>每日记录<text style="color:#c1c1c2;margin-left:20rpx;font-weight:500;font-size:30rpx;">（11月）</text></view>
+				<view>每日记录<text style="color:#c1c1c2;margin-left:20rpx;font-weight:500;font-size:30rpx;">（{{monthTitle}}月）</text></view>
 			</view>
 			<!-- 日历 -->
 			<view class="day_record_calendar">
@@ -32,8 +32,8 @@
 					</view>
 				</view>
 				<view class="day_list">
-					<view :class="activeIndex===index?['day_item','active_day_css']:['day_item','af']" v-for="(item,index) in dayArray"
-					 :key="index" @click="activeDay(index)">{{item}}</view>
+					<view :style="activeIndex===index?'background-color: #008fff;border-radius: 50%;color:white;':''" :class="[index<5?'af':'',item.todayShow?['day_item','active_day_css']:['day_item']]"
+					 v-for="(item,index) in dayArray" :key="index" @click="activeDay(index)"><text :style="index>=5?'color:#e1e1e1;':''">{{item.day}}</text></view>
 				</view>
 			</view>
 			<view class="line">
@@ -77,22 +77,31 @@
 				dayArray: null,
 				activeIndex: null,
 				todayShow: false,
-				monthTitle: getDate().num.M
+				monthTitle: getDate().num.M,
+				weekend: true
 			}
 		},
 		methods: {
 			// 添加选择样式
 			addActiveCss() {
 				var today = getDate().num.D < 9 ? '0' + getDate().num.D : getDate().num.D
-				this.dayArray.forEach(item => {
-					if (today == item) {
-						this.todayShow = true
+				this.dayArray.forEach((item, index) => {
+					if (today == item.day) {
+						item.todayShow = true
 					}
 				})
 			},
 			// 日期选择
 			activeDay(index) {
-				this.activeIndex = index
+				if (index == 5 || index == 6) {
+					uni.showToast({
+						icon: 'none',
+						title: '周末就好好休息吧'
+					})
+					this.weekend = true
+				} else {
+					this.activeIndex = index
+				}
 			},
 			// 页面跳转
 			jump() {
@@ -112,11 +121,20 @@
 				var a = 0
 				this.dayArray = arr.map(item => {
 					if (item <= 9) {
-						return '0' + item
+						return {
+							day: '0' + item,
+							todayShow: false
+						}
 					} else if (item > endMonth) {
-						return '0' + (++a)
+						return {
+							day: '0' + (++a),
+							todayShow: false
+						}
 					} else {
-						return item
+						return {
+							day: item,
+							todayShow: false
+						}
 					}
 				})
 				this.addActiveCss()
@@ -197,8 +215,9 @@
 
 	.active_day_css {
 		border-radius: 50%;
-		background-color: #008fff;
+		background-color: #b3deff;
 		color: white;
+		z-index: 1;
 	}
 
 	.line {
@@ -267,8 +286,6 @@
 		display: flex;
 		align-items: center;
 	}
-
-
 
 	.card_record_item_r {
 		margin-left: 73rpx;

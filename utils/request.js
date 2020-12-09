@@ -1,24 +1,24 @@
 const baseUrl = ''
 
-export default (params, data) => {
+export const myAxios = (params) => {
 	uni.showLoading({
 		title: '加载中'
 	})
 	return new Promise((resolve, reject) => {
 		uni.request({
 			url: baseUrl + params.url,
-			method: params.method,
-			data,
+			method: params.method || "GET",
+			data: params.data,
 			header: {
 				"Content-Type": "application/json; charset=UTF-8"
 			},
-			success(res) {
+			success: (res) => {
 				resolve(res)
 			},
-			fail(err) {
+			fail: (err) => {
 				reject(err)
 			},
-			complete() {
+			complete: () => {
 				uni.hideLoading()
 			}
 		})
