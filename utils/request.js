@@ -1,4 +1,4 @@
-const baseUrl = ''
+const baseUrl = 'http://school.nice-6.com'
 
 export default (params) => {
 	uni.showLoading({

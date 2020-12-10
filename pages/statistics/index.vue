@@ -32,7 +32,7 @@
 					</view>
 				</view>
 				<view class="day_list">
-					<view :style="activeIndex===index?'background-color: #008fff;border-radius: 50%;color:white;':''" :class=" item.todayShow?['day_item','active_day_css']:['day_item','af']"
+					<view :style="activeIndex===index?'background-color: #008fff;border-radius: 50%;color:white;':''" :class=" item.todayShow?['day_item','active_day_css','active_day_css2']:['day_item','af']"
 					 v-for="(item,index) in dayArray" :key="index" @click="activeDay(index)"><text :style="index>=5?'color:#e1e1e1;':''">{{item.day}}</text></view>
 				</view>
 			</view>
@@ -93,7 +93,6 @@
 			},
 			// 日期选择
 			activeDay(index) {
-
 				if (index == 5 || index == 6) {
 					uni.showToast({
 						icon: 'none',
@@ -139,7 +138,11 @@
 					}
 				})
 				this.addActiveCss()
-			}
+			},
+			// /api/Daily/index
+			// getDaily(){
+			// 	this.$myAxios
+			// }
 		},
 		onLoad() {
 			this.getDay()
@@ -219,7 +222,6 @@
 		border-radius: 50%;
 		background-color: #b3deff;
 		color: white;
-		z-index: 1;
 	}
 
 	.line {
