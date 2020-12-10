@@ -7,18 +7,18 @@ export default (params) => {
 	return new Promise((resolve, reject) => {
 		uni.request({
 			url: baseUrl + params.url,
-			method: params.method,
+			method: params.method || "GET",
 			data: params.data,
 			header: {
 				"Content-Type": "application/json; charset=UTF-8"
 			},
-			success(res) {
+			success: (res) => {
 				resolve(res)
 			},
-			fail(err) {
+			fail: (err) => {
 				reject(err)
 			},
-			complete() {
+			complete: () => {
 				uni.hideLoading()
 			}
 		})

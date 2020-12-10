@@ -2,7 +2,7 @@
 	<view id="page">
 		<view class="month_collect">
 			<view class="month_collect_title">
-				<view>11月汇总</view>
+				<view>{{monthTitle}}月汇总</view>
 				<view class="iconfont icon-arrow-right" style="color:#c1c1c2;font-size:24rpx;" @click="jump"></view>
 			</view>
 			<view class="month_collect_number">
@@ -22,7 +22,7 @@
 		</view>
 		<view class="day_record">
 			<view class="day_record_title">
-				<view>每日记录<text style="color:#c1c1c2;margin-left:20rpx;font-weight:500;font-size:30rpx;">（11月）</text></view>
+				<view>每日记录<text style="color:#c1c1c2;margin-left:20rpx;font-weight:500;font-size:30rpx;">（{{monthTitle}}月）</text></view>
 			</view>
 			<!-- 日历 -->
 			<view class="day_record_calendar">
@@ -32,7 +32,7 @@
 					</view>
 				</view>
 				<view class="day_list">
-					<view :style="activeIndex===index?'background-color: #008fff;border-radius: 50%;color:white;':''" :class=" item.todayShow?['day_item','active_day_css','active_day_css2']:['day_item','af']"
+					<view :style="activeIndex===index?'background-color: #008fff;border-radius: 50%;color:white;':''" :class="[index<5?'af':'',item.todayShow?['day_item','active_day_css']:['day_item']]"
 					 v-for="(item,index) in dayArray" :key="index" @click="activeDay(index)"><text :style="index>=5?'color:#e1e1e1;':''">{{item.day}}</text></view>
 				</view>
 			</view>
@@ -77,6 +77,7 @@
 				dayArray: null,
 				activeIndex: null,
 				todayShow: false,
+				monthTitle: getDate().num.M,
 				weekend: true
 			}
 		},
@@ -89,7 +90,6 @@
 						item.todayShow = true
 					}
 				})
-				console.log(this.dayArray)
 			},
 			// 日期选择
 			activeDay(index) {
@@ -139,14 +139,20 @@
 				})
 				this.addActiveCss()
 			},
-			// /api/Daily/index
-			// getDaily(){
-			// 	this.$myAxios
-			// }
+			getDaily() {
+				this.myAxios({
+					url: "/api/Daily/index",
+					data: {
+						time: getDate().num.fullDate
+					}
+				}).then(res => {
+					console.log(res)
+				})
+			}
 		},
 		onLoad() {
 			this.getDay()
-			// this.addActiveCss()
+			this.getDaily()
 		}
 	}
 </script>
@@ -290,8 +296,6 @@
 		display: flex;
 		align-items: center;
 	}
-
-
 
 	.card_record_item_r {
 		margin-left: 73rpx;
