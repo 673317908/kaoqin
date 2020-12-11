@@ -2,20 +2,20 @@
 	<view id="page">
 		<view class="month_collect">
 			<view class="month_collect_title">
-				<view>{{monthTitle}}月汇总</view>
+				<view>{{userDetail.name}},{{monthTitle}}月汇总</view>
 				<view class="iconfont icon-arrow-right" style="color:#c1c1c2;font-size:24rpx;" @click="jump"></view>
 			</view>
 			<view class="month_collect_number">
 				<view class="month_collect_late">
-					<view class="num">7</view>
+					<view class="num">{{userDetail.leave_count>0?userDetail.leave_count:0}}</view>
 					<view class="text">请假（次）</view>
 				</view>
 				<view class="month_collect_late">
-					<view class="num">7</view>
+					<view class="num">{{userDetail.early_count>0?userDetail.early_count:0}}</view>
 					<view class="text">迟到（次）</view>
 				</view>
 				<view class="month_collect_leave">
-					<view class="num">0</view>
+					<view class="num">{{userDetail.even_count>0?userDetail.even_count:0}}</view>
 					<view class="text">早退（次）</view>
 				</view>
 			</view>
@@ -32,7 +32,7 @@
 					</view>
 				</view>
 				<view class="day_list">
-					<view :style="activeIndex===index?'background-color: #008fff;border-radius: 50%;color:white;':''" :class="[index<5?'af':'',item.todayShow?['day_item','active_day_css']:['day_item']]"
+					<view :style="activeIndex===index?'background-color: #008fff;border-radius: 50%;color:white;':''" :class="[item.todayShow?['day_item','active_day_css']:['day_item']]"
 					 v-for="(item,index) in dayArray" :key="index" @click="activeDay(index)"><text :style="index>=5?'color:#e1e1e1;':''">{{item.day}}</text></view>
 				</view>
 			</view>
@@ -44,21 +44,25 @@
 			<!-- 规则 -->
 			<view class="rule">
 				<view>
-					规则：固定上下班 A 09:00-18:00
+					{{userDetail.rule}}
 				</view>
 				<view>
-					共1次卡，工时0小时
+					约{{userDetail.total_time}}小时
 				</view>
 			</view>
 			<!-- 打卡时间、地点 -->
-			<view class="card_record">
+			<view class="card_record" v-if="userDetail.in_time">
 				<view class="card_record_item">
-					<view class="card_record_item_r">上班 09:14</view>
+					<view class="card_record_item_r">进校 {{userDetail.in_time}}</view>
 				</view>
-				<view class="card_line"></view>
-				<view class="card_record_item ">
-					<view class="card_record_item_r offduty">下班 09:14</view>
+				<view class="card_line" v-if="userDetail.out_time"></view>
+				<view class="card_record_item " v-if="userDetail.out_time">
+					<view class="card_record_item_r offduty">离校 {{userDetail.out_time}}</view>
 				</view>
+			</view>
+			<view class="none_data" v-else>
+				<view class="iconfont icon-zanwushuju" style="font-size:310rpx"></view>
+				<view>{{userDetail.typeText}}</view>
 			</view>
 		</view>
 	</view>
@@ -74,11 +78,14 @@
 		data() {
 			return {
 				calendarArray: ['一', '二', '三', '四', '五', '六', '日'],
-				dayArray: null,
-				activeIndex: null,
-				todayShow: false,
-				monthTitle: getDate().num.M,
-				weekend: true
+				dayArray: null, // 日期数组
+				activeIndex: null, // 当前点击日期索引
+				todayShow: false, // 
+				monthTitle: getDate().num.M, // 月汇总标题
+				weekend: true, // 周末样式状态
+				userDetail: {}, // 当天数据
+				week: [], // 本周的全部日期
+				time: ""
 			}
 		},
 		methods: {
@@ -101,6 +108,8 @@
 					this.weekend = true
 				} else {
 					this.activeIndex = index
+					this.time = this.week[index]
+					this.getDaily()
 				}
 			},
 			// 页面跳转
@@ -139,20 +148,70 @@
 				})
 				this.addActiveCss()
 			},
+			// 获取当天
 			getDaily() {
+				var setData = {}
+				if (this.time != '') {
+					setData.time = this.time
+				} else {
+					setData.time = getDate().num.fullDate
+				}
 				this.myAxios({
 					url: "/api/Daily/index",
-					data: {
-						time: getDate().num.fullDate
-					}
+					data: setData
 				}).then(res => {
-					console.log(res)
+					this.userDetail = res.data
+					this.computedTime()
+					this.userDetail.typeText = this.judgeType(this.userDetail)
 				})
+			},
+			// 计算共在学校的时间
+			computedTime() {
+				if (this.userDetail.in_time) {
+					var inTime = Number(this.userDetail.in_time.slice(11, 13))
+					var outTime = Number(this.userDetail.out_time.slice(11, 13))
+					this.userDetail.total_time = outTime - inTime
+				} else {
+					this.userDetail.total_time = 0
+				}
+			},
+			// 获取本周星期一到星期五的日期
+			getWeek(day) {
+				var today = new Date();
+				var targetday_milliseconds = today.getTime() + 1000 * 60 * 60 * 24 * day;
+				today.setTime(targetday_milliseconds);
+				var tYear = today.getFullYear();
+				var tMonth = today.getMonth();
+				var tDate = today.getDate();
+				tMonth = this.doHandleMonth(tMonth + 1);
+				tDate = this.doHandleMonth(tDate);
+				return tYear + "-" + tMonth + "-" + tDate;
+			},
+			doHandleMonth(month) {
+				var m = month;
+				if (month.toString().length == 1) {
+					m = "0" + month;
+				}
+				return m;
+			},
+			judgeType(value) {
+				if (value.type == 2) {
+					return '请假'
+				} else if (value.type == 3) {
+					return '已休学'
+				} else if (!value.in_time) {
+					return '未打卡'
+				}
 			}
 		},
 		onLoad() {
 			this.getDay()
 			this.getDaily()
+			let data = []
+			for (let i = 4; i >= 0; i--) {
+				data.push(this.getWeek(-i))
+			}
+			this.week = data;
 		}
 	}
 </script>
@@ -278,14 +337,23 @@
 		border-radius: 50%;
 		width: 10rpx;
 		height: 10rpx;
-		background-color: #eea605;
 		position: absolute;
 		top: 70rpx;
 		left: 50%;
 		transform: translateX(-50%);
 	}
 
+	.yellow_af::after {
+		background-color: #eea605;
+	}
 
+	.green_af::after {
+		background-color: #59d792;
+	}
+
+	.red_af::after {
+		background-color: red;
+	}
 
 	.card_record {
 		margin-top: 40rpx;
@@ -327,5 +395,10 @@
 		position: absolute;
 		top: 50rpx;
 		left: 14rpx;
+	}
+
+	.none_data {
+		text-align: center;
+		color: #959595;
 	}
 </style>

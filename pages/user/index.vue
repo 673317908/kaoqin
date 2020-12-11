@@ -3,7 +3,7 @@
 		<view class="my_heade">
 			<view class="my_info">
 				<view class="my_avater">
-					<image src="../../static/logo.png" mode="widthFix"></image>
+					<image src="../../static/images/morentouxiang_20200609135440.png" mode="widthFix"></image>
 				</view>
 				<view class="my_name">..</view>
 			</view>
