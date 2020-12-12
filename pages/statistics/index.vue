@@ -195,10 +195,13 @@
 				return m;
 			},
 			judgeType(value) {
+				var week = getDate().num.w
 				if (value.type == 2) {
 					return '请假'
 				} else if (value.type == 3) {
 					return '已休学'
+				} else if (!value.in_time && (week != 6 || week != 0)) {
+					return '今天是周末噢'
 				} else if (!value.in_time) {
 					return '未打卡'
 				}

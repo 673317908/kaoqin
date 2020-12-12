@@ -1,6 +1,6 @@
 <template>
 	<view class="add_form">
-		dsdas
+		fassddsdsa
 	</view>
 </template>
 
@@ -15,11 +15,11 @@
 
 		},
 		methods: {
-			
+
 		}
 	}
 </script>
 
 <style>
-	
+
 </style>

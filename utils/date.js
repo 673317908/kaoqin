@@ -27,6 +27,7 @@ export function getDate() {
 			h,
 			m,
 			s,
+			w,
 			fullDate: Y + "-" + (M < 9 ? '0' + M : M) + "-" + (D < 9 ? '0' + D : D),
 		},
 		text: {

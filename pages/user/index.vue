@@ -71,12 +71,15 @@
 	}
 
 	.my_avater {
-		width: 160rpx
+		box-shadow: 0 0 100rpx 3rpx rgba(0,0,0,.3);
+		border-radius: 50%;
+		display: flex;
+		align-items: center;
 	}
 
 	.my_avater image {
 		border-radius: 50%;
-		width: 100%;
+		width: 160rpx;
 	}
 
 	.my_name {
