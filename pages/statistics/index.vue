@@ -33,7 +33,7 @@
 				</view>
 				<view class="day_list">
 					<view :style="activeIndex===index?'background-color: #008fff;border-radius: 50%;color:white;':''" :class="[item.todayShow?['day_item','active_day_css']:['day_item']]"
-					 v-for="(item,index) in dayArray" :key="index" @click="activeDay(index)"><text :style="index>=5?'color:#e1e1e1;':''">{{item.day}}</text></view>
+					 v-for="(item,index) in week" :key="index" @click="activeDay(index)"><text :style="index>=5?'color:#e1e1e1;':''">{{item.day}}</text></view>
 				</view>
 			</view>
 			<view class="line">
@@ -78,7 +78,6 @@
 		data() {
 			return {
 				calendarArray: ['一', '二', '三', '四', '五', '六', '日'],
-				dayArray: null, // 日期数组
 				activeIndex: null, // 当前点击日期索引
 				todayShow: false, // 
 				monthTitle: getDate().num.M, // 月汇总标题
@@ -92,7 +91,7 @@
 			// 添加选择样式
 			addActiveCss() {
 				var today = getDate().num.D < 9 ? '0' + getDate().num.D : getDate().num.D
-				this.dayArray.forEach((item, index) => {
+				this.week.forEach((item, index) => {
 					if (today == item.day) {
 						item.todayShow = true
 					}
@@ -108,7 +107,7 @@
 					this.weekend = true
 				} else {
 					this.activeIndex = index
-					this.time = this.week[index]
+					this.time = this.week[index].date
 					this.getDaily()
 				}
 			},
@@ -117,36 +116,6 @@
 				uni.navigateTo({
 					url: "./detail/index"
 				})
-			},
-			// 获取日期
-			getDay() {
-				var starttime = getMonday('s', 0)
-				var endTime = getMonday('e', 0)
-				var endMonth = getMonth('e', 0).slice(8, 10)
-				var arr = [+starttime.d, +starttime.d + 1, +starttime.d + 2, +starttime.d + 3, +starttime.d + 4, +starttime.d + 5,
-					+
-					starttime.d + 6
-				]
-				var a = 0
-				this.dayArray = arr.map(item => {
-					if (item <= 9) {
-						return {
-							day: '0' + item,
-							todayShow: false
-						}
-					} else if (item > endMonth) {
-						return {
-							day: '0' + (++a),
-							todayShow: false
-						}
-					} else {
-						return {
-							day: item,
-							todayShow: false
-						}
-					}
-				})
-				this.addActiveCss()
 			},
 			// 获取当天
 			getDaily() {
@@ -176,45 +145,53 @@
 				}
 			},
 			// 获取本周星期一到星期五的日期
-			getWeek(day) {
-				var today = new Date();
-				var targetday_milliseconds = today.getTime() + 1000 * 60 * 60 * 24 * day;
-				today.setTime(targetday_milliseconds);
-				var tYear = today.getFullYear();
-				var tMonth = today.getMonth();
-				var tDate = today.getDate();
-				tMonth = this.doHandleMonth(tMonth + 1);
-				tDate = this.doHandleMonth(tDate);
-				return tYear + "-" + tMonth + "-" + tDate;
+			getMonDate() {
+				var d = new Date(),
+					day = d.getDay(),
+					date = d.getDate();
+				if (day == 1)
+					return d;
+				if (day == 0)
+					d.setDate(date - 6);
+				else
+					d.setDate(date - day + 1);
+				return d;
 			},
-			doHandleMonth(month) {
-				var m = month;
-				if (month.toString().length == 1) {
-					m = "0" + month;
+			// 处理日期
+			getDay() {
+				var d = this.getMonDate();
+				var arr = [];
+				for (var i = 0; i < 7; i++) {
+					arr.push(d.getFullYear() + '-' + (d.getMonth() + 1) + '-' + d.getDate());
+					d.setDate(d.getDate() + 1);
 				}
-				return m;
+				this.week = arr.map(item => {
+					var day = item.slice(8, 10)
+					return {
+						day: day.length == 2 ? day : '0' + day,
+						date: item,
+						todayShow: false
+					}
+				});
+				this.addActiveCss()
 			},
+			// 修改提示文字
 			judgeType(value) {
 				var week = getDate().num.w
 				if (value.type == 2) {
 					return '请假'
 				} else if (value.type == 3) {
 					return '已休学'
-				} else if (!value.in_time && (week != 6 || week != 0)) {
+				} else if (!value.in_time && (week == 6 || week == 0)) {
 					return '今天是周末噢'
 				} else if (!value.in_time) {
 					return '未打卡'
 				}
-			}
+			},
 		},
 		onLoad() {
 			this.getDay()
 			this.getDaily()
-			let data = []
-			for (let i = 4; i >= 0; i--) {
-				data.push(this.getWeek(-i))
-			}
-			this.week = data;
 		}
 	}
 </script>
